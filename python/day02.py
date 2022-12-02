@@ -15,10 +15,8 @@ x: Data = [tuple(map(lambda a: choices[a], x.split())) for x in raw.splitlines()
 def get_score(data: Data, alt=False):
     score = 0
     for a, b in data:
-        if alt:
-            b = (a + (b + 2) % 3) % 3
-        mod = (b - a) % 3
-        score += (3 * (1 + mod)) % 9 + b + 1
+        if alt: b = (a + (b + 2) % 3) % 3
+        score += (3 * (1 + (b - a) % 3)) % 9 + b + 1
     return score
 
 
