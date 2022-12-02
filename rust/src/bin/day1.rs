@@ -8,7 +8,6 @@ fn main() {
     let mut ndata: VecN = data
         .trim()
         .split("\n\n")
-        .into_iter()
         .map(|x| -> N {
             let nums: VecN = x.split("\n").map(|x| x.parse().unwrap()).collect();
             nums.iter().sum()
