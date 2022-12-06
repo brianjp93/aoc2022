@@ -9,7 +9,7 @@ lines = crate_string.splitlines()
 
 def get_crates(lines: list[str]):
     for idx in range(1, len(lines[-1]), 4):
-        yield list(reversed(''.join(x[idx] for x in lines[:-1] if x[idx].strip())))
+        yield [x[idx] for x in lines[:-1] if x[idx].strip()][::-1]
 
 def move(crates: list[list[str]], group=False):
     for data in re.findall(r"move (\d+) from (\d+) to (\d+)", arrangement):
