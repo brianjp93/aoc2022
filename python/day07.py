@@ -53,13 +53,10 @@ def parse_output(data: str):
                 pass
             case ["$", "cd", name]:
                 cwd = root if name == "/" else cwd.cd(name)
-            case [a, b]:
-                if a == "dir":
-                    cwd.folders.append(Folder(name=b, parent=cwd))
-                else:
-                    cwd.files.append(File(name=b, size=int(a)))
-            case _:
-                raise Exception("how did you get here?")
+            case ['dir', b]:
+                cwd.folders.append(Folder(name=b, parent=cwd))
+            case [size, name] if size.isdigit():
+                cwd.files.append(File(name=name, size=int(size)))
     return root
 
 
