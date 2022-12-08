@@ -44,21 +44,22 @@ class Folder:
 
 
 def parse_output(data: str):
-    lines = data.strip().split("$ ")
+    lines = data.strip().splitlines()
     root = Folder(name="/")
     cwd = root
     for line in lines:
-        full = line.splitlines() or [line]
-        match full[0].split():
-            case ["ls"]:
-                for ls_line in full[1:]:
-                    a, b = ls_line.split()
-                    if a == "dir":
-                        cwd.folders.append(Folder(name=b, parent=cwd))
-                    else:
-                        cwd.files.append(File(name=b, size=int(a)))
-            case ["cd", name]:
+        match line.split():
+            case ["$", "ls"]:
+                pass
+            case ["$", "cd", name]:
                 cwd = root if name == "/" else cwd.cd(name)
+            case [a, b]:
+                if a == "dir":
+                    cwd.folders.append(Folder(name=b, parent=cwd))
+                else:
+                    cwd.files.append(File(name=b, size=int(a)))
+            case _:
+                raise Exception("how did you get here?")
     return root
 
 
