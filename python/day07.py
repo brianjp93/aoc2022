@@ -49,8 +49,6 @@ def parse_output(data: str):
     cwd = root
     for line in lines:
         match line.split():
-            case ["$", "ls"]:
-                pass
             case ["$", "cd", name]:
                 cwd = root if name == "/" else cwd.cd(name)
             case ['dir', b]:
