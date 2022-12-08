@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from functools import cached_property
 from pathlib import Path
 from typing import Self
 
@@ -18,7 +17,7 @@ class Tree:
     def __repr__(self):
         return f"{self.value}"
 
-    @cached_property
+    @property
     def surroundings(self):
         dirs: dict[str, list[Tree]] = {
             "up": [],
