@@ -50,10 +50,10 @@ class MonkeyList:
             self.do_turn(monkey)
 
     def do_turn(self, monkey: Monkey):
-        while monkey.items:
-            throw_to = monkey.throw_to(0, maximum_worry=self.maximum_worry, divisor=self.lcm)
-            item = monkey.items.pop(0)
-            self.monkeys[throw_to].items.append(item)
+        for i in range(len(monkey.items)):
+            throw_to = monkey.throw_to(i, maximum_worry=self.maximum_worry, divisor=self.lcm)
+            self.monkeys[throw_to].items.append(monkey.items[i])
+        monkey.items = []
 
     @cached_property
     def lcm(self):
@@ -61,12 +61,7 @@ class MonkeyList:
 
 
 def get_monkeys():
-    monkey_list = []
-    for data in raw.split('\n\n'):
-        monkey = Monkey.parse(data)
-        monkey_list.append(monkey)
-    monkeys = MonkeyList(monkeys=monkey_list)
-    return monkeys
+    return MonkeyList(monkeys=[Monkey.parse(x) for x in raw.split('\n\n')])
 
 
 if __name__ == '__main__':
