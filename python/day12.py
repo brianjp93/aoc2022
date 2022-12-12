@@ -40,7 +40,7 @@ class Hill:
                 if ch == "S":
                     start = Point(x=x, y=y)
                 m[Point(x=x, y=y)] = ch
-        return Hill(map=m, start=start)
+        return cls(map=m, start=start)
 
     @property
     def all_starts(self):

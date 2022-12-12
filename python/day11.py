@@ -25,7 +25,7 @@ class Monkey:
         test = int(c.split()[-1])
         if_true = int(d.split()[-1])
         if_false = int(e.split()[-1])
-        return Monkey(items=items, operation=operation, test=test, if_true=if_true, if_false=if_false)
+        return cls(items=items, operation=operation, test=test, if_true=if_true, if_false=if_false)
 
     def throw_to(self, item_id: int, maximum_worry=False, divisor=0):
         self.inspection_count += 1
