@@ -50,11 +50,8 @@ class Hill:
         queue: Queue[tuple[Point, int]] = Queue()
         queue.put((start, 0))
         visited: dict[Point, int] = {}
-        end = 'aS' if backwards else 'E'
         while not queue.empty():
             point, dist = queue.get()
-            if self.map[point] in end:
-                return dist
             if found := visited.get(point, None):
                 if dist >= found:
                     continue
@@ -73,9 +70,13 @@ class Hill:
                 else:
                     if other_height <= height + 1:
                         queue.put((other, dist + 1))
-        return float("inf")
+        return visited
+
+    def get_all_a(self):
+        return [x for x, y in self.map.items() if y in 'Sa']
 
 
 hill = Hill.parse(raw)
-print(hill.find_end(hill.start))
-print(hill.find_end(hill.end, backwards=True))
+distances = hill.find_end(hill.end, backwards=True)
+print(distances[hill.start])
+print(min(*[distances.get(x, float('inf')) for x in hill.get_all_a()]))
