@@ -92,22 +92,22 @@ def double_traverse():
 
         rate1, to_valves1 = VALVES[valve1]
         rate2, to_valves2 = VALVES[valve2]
-        to_valves2 = to_valves2 - {prev1, prev2}
-        to_valves1 = to_valves1 - {prev1, prev2}
+        to_valves2 = to_valves2 - {prev1, prev2, valve1}
+        to_valves1 = to_valves1 - {prev1, prev2, valve2}
         next_minutes = minutes - 1
-        if valve1 not in opened and rate1 > 0:
+        if rate1 > 0 and valve1 not in opened:
             for next_valve2 in to_valves2:
                 # open valve1 only
                 next_opened = opened.copy()
                 next_opened[valve1] = next_minutes * rate1
                 stack.append((valve1, next_valve2, valve1, valve2, next_opened, next_minutes))
-        if valve2 not in opened and rate2 > 0:
+        if rate2 > 0 and valve2 not in opened:
             for next_valve1 in to_valves1:
                 # open valve2 only
                 next_opened = opened.copy()
                 next_opened[valve2] = next_minutes * rate2
                 stack.append((next_valve1, valve2, valve1, valve2, next_opened, next_minutes))
-        if valve1 not in opened and valve2 not in opened and rate1 != 0 and rate2 != 0 and valve1 != valve2:
+        if rate1 != 0 and rate2 != 0 and valve1 != valve2 and valve1 not in opened and valve2 not in opened:
             # open both valves
             next_opened = opened.copy()
             next_opened[valve1] = next_minutes * rate1
@@ -123,7 +123,6 @@ def double_traverse():
 
 out = traverse()
 print(out)
-# print(max(out))
 
 out = double_traverse()
 print(out)
