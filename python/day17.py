@@ -5,7 +5,6 @@ from dataclasses import dataclass
 file = Path(__file__).parent.parent / "data" / "day17.txt"
 raw = file.read_text().strip()
 
-# raw = '>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>'
 raw = raw.strip()
 
 @dataclass(frozen=True)
@@ -48,6 +47,14 @@ class Block:
                 bottom = point
         return bottom
 
+    @property
+    def top(self):
+        top = self.map[0]
+        for point in self.map[1:]:
+            if point.y > top.y:
+                top = point
+        return top
+
     def move(self, vector: Point):
         new_map: list[Point] = []
         for point in self.map:
@@ -75,6 +82,7 @@ class Chamber:
     WALL_LEFT = -1
     WALL_RIGHT = 7
     GROUND = -1
+    top_y = -1
 
     def run_simulation(self, rock_count=2022):
         rocks = 0
@@ -97,10 +105,63 @@ class Chamber:
                 block.move(MOVE_UP)
                 for point in block.map:
                     self.map.add(point)
+                self.top_y = max(self.top_y, block.top.y)
                 block = None
                 rocks += 1
-            self.draw_map(block)
-            input()
+
+    def get_big_rocks(self, rock_count=1_000_000_000_000):
+        rocks = 0
+        block_step = 0
+        block = None
+        jet_step = 0
+        last_height = 0
+        last_rocks = 0
+        cycle = dy_first = drock_first = offset_height = height_after_cycles = 0
+        rocks_remaining = None
+        end_rock_count = 0
+        while True:
+            if jet_step == 0:
+                new_height = self.top_y + 1
+                dy = new_height - last_height
+                drocks = rocks - last_rocks
+                last_rocks = rocks
+                last_height = new_height
+                if cycle == 1:
+                    dy_first = dy
+                    drock_first = drocks
+                elif cycle == 2:
+                    dy_cycle = dy
+                    drock_cycle = drocks
+                    rocks_left = rock_count - drock_first
+                    cycles_left = rocks_left // drock_cycle
+                    rocks_after_cycles = (drock_cycle * cycles_left) + drock_first
+                    height_after_cycles = (dy_cycle * cycles_left) + dy_first
+                    rocks_remaining = rock_count - rocks_after_cycles
+                    offset_height = new_height
+                    end_rock_count = 0
+                cycle += 1
+            if block is None:
+                block = ORDER[block_step]
+                block_step = (block_step + 1) % len(ORDER)
+                self.init_block(block)
+            jet_dir = raw[jet_step]
+            jet = MOVE_RIGHT if jet_dir == '>' else MOVE_LEFT
+            jet_step = (jet_step + 1) % len(raw)
+            block.move(jet)
+            if self.is_collision(block):
+                block.move(Point(0, 0) - jet)
+            block.move(MOVE_DOWN)
+            if self.is_collision(block):
+                block.move(MOVE_UP)
+                for point in block.map:
+                    self.map.add(point)
+                self.top_y = max(self.top_y, block.top.y)
+                block = None
+                rocks += 1
+                end_rock_count += 1
+                if end_rock_count == rocks_remaining:
+                    height_change = (self.top_y + 1) - offset_height
+                    return height_change + height_after_cycles
 
     def is_collision(self, block: Block):
         if block.left.x <= self.WALL_LEFT:
@@ -122,14 +183,6 @@ class Chamber:
         move = xpoint + ypoint
         block.move(move)
 
-    @property
-    def top_y(self):
-        top_y = -1
-        for point in self.map:
-            if point.y > top_y:
-                top_y = point.y
-        return top_y
-
     def draw_map(self, block: Block | None):
         top_y = self.top_y + 5
         rows = []
@@ -147,10 +200,9 @@ class Chamber:
 
 
 chamber = Chamber(set())
-chamber.run_simulation()
+chamber.run_simulation(2022)
 print(chamber.top_y + 1)
 
-# repeat_point = 50455
-# chamber.run_simulation(repeat_point)
-# print(chamber.top_y + 1)
-# rocks = 1_000_000_000_000
+chamber = Chamber(set())
+out = chamber.get_big_rocks()
+print(out)
