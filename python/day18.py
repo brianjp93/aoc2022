@@ -127,7 +127,7 @@ class Space:
                         count += 1
         return count
 
-    def flood(self, cube: Cube):
+    def flood(self, cube: Cube) -> set[Cube]:
         stack = [cube]
         flooded: set[Cube] = set()
         while stack:
