@@ -90,6 +90,7 @@ class Jungle:
     def do_instructions(self):
         pos = self.start
         facing = 0
+        visited: set[Point] = {pos}
         for turn, count in self.instructions:
             if turn and turn in 'RL':
                 d_facing = -1 if turn == 'L' else 1
@@ -105,6 +106,7 @@ class Jungle:
                     break
                 pos = npos
                 facing = nfacing
+                visited.add(pos)
         password = (1000 * (pos.y + 1)) + (4 * (pos.x + 1)) + facing
         return password
 
@@ -125,7 +127,7 @@ class Jungle:
         npos = Point(x=wrap[0], y=wrap[1])
         return npos, facing
 
-    def draw(self, pos: Point):
+    def draw(self, pos: Point, visited: set[Point]):
         xmax = max(x[1] for x in self.row_ranges.values())
         ymax = max(x[1] for x in self.col_ranges.values())
         rows = []
@@ -134,6 +136,8 @@ class Jungle:
             for x in range(xmax + 1):
                 if x == pos.x and y == pos.y:
                     row.append('o')
+                elif Point(x, y) in visited:
+                    row.append('x')
                 else:
                     row.append(self.map.get(Point(x, y), Space.ABYSS).value)
             rows.append(''.join(row))
