@@ -2,7 +2,7 @@ use std::{
     collections::HashSet,
     fs,
     hash::{Hash, Hasher},
-    ops::{Add, Sub},
+    ops::{Add, Sub}
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Default, Eq)]
@@ -88,10 +88,7 @@ struct Rope {
 
 impl Rope {
     fn new(rope_length: i32) -> Self {
-        let mut rope: Vec<Point> = vec![];
-        for _ in 0..rope_length {
-            rope.push(Point::default());
-        }
+        let rope: Vec<Point> = vec![Point::default(); rope_length as usize];
         return Self {
             rope,
             l_history: HashSet::new(),
