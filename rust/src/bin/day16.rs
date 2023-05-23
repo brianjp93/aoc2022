@@ -1,8 +1,8 @@
+use itertools::Itertools;
 use std::{
     collections::{HashMap, HashSet},
     fs,
 };
-use itertools::Itertools;
 
 fn get_init_data() -> (ValveMap, HashSet<String>, String) {
     let data = get_data();
@@ -72,10 +72,22 @@ fn traverse(start: String, need_to_open: HashSet<String>, valves: ValveMap) -> i
     return maximum;
 }
 
-
 fn double_traverse(start: String, need_to_open: HashSet<String>, valves: ValveMap) -> i32 {
-    let mut stack: Vec<(String, String, Option<String>, Option<String>, HashMap<String, i32>, i32)> =
-        vec![(start.clone(), start.clone(), None, None, HashMap::new(), 26i32)];
+    let mut stack: Vec<(
+        String,
+        String,
+        Option<String>,
+        Option<String>,
+        HashMap<String, i32>,
+        i32,
+    )> = vec![(
+        start.clone(),
+        start.clone(),
+        None,
+        None,
+        HashMap::new(),
+        26i32,
+    )];
     let mut maximum = 0;
     while let Some((valve1, valve2, prev1, prev2, opened, minutes)) = stack.pop() {
         let opened_keys = opened.keys().map(|x| x.clone()).collect::<HashSet<_>>();
@@ -91,7 +103,7 @@ fn double_traverse(start: String, need_to_open: HashSet<String>, valves: ValveMa
         let max_possible: i32 = valves_left_values
             .iter()
             .enumerate()
-            .map(|(i, x)| return x * (minutes - (((i as i32)/2) * 2i32)).max(0i32))
+            .map(|(i, x)| return x * (minutes - (((i as i32) / 2) * 2i32)).max(0i32))
             .sum::<i32>()
             + opened.values().sum::<i32>();
 
@@ -145,7 +157,12 @@ fn double_traverse(start: String, need_to_open: HashSet<String>, valves: ValveMa
                 ));
             }
         }
-        if rate1 != 0 && rate2 != 0 && valve1 != valve2 && !opened.contains_key(&valve1) && !opened.contains_key(&valve2) {
+        if rate1 != 0
+            && rate2 != 0
+            && valve1 != valve2
+            && !opened.contains_key(&valve1)
+            && !opened.contains_key(&valve2)
+        {
             let mut next_opened = opened.clone();
             next_opened.insert(valve1.clone(), next_minutes * rate1);
             next_opened.insert(valve2.clone(), next_minutes * rate2);
